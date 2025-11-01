@@ -27,8 +27,14 @@
 ;; Revert Dired and other buffers
 (setq global-auto-revert-non-file-buffers t)
 ;; Customize org-mode
+(defun dw/org-mode-setup ()
+  (org-indent-mode)
+  (variable-pitch-mode 1)
+  (auto-fill-mode 0)
+  (visual-line-mode 1))
 (use-package org
   :ensure t
+  :hook (org-mode . dw/org-mode-setup)
   :config
   ;; Open file in same window
   (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file))
