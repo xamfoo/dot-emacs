@@ -24,6 +24,8 @@
 (load-theme 'modus-operandi t)
 ;; Revert buffers when the underlying file has changed
 (global-auto-revert-mode 1)
+;; Revert Dired and other buffers
+(setq global-auto-revert-non-file-buffers t)
 ;; Initialize package management system and add MELPA repository
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
