@@ -30,3 +30,6 @@
 (package-initialize)
 (unless package-archive-contents
   (package-refresh-contents))
+;; Install magit if not already installed
+(unless (package-installed-p 'magit)
+  (package-install 'magit))
