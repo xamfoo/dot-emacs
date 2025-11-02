@@ -38,6 +38,10 @@
   :config
   ;; Open file in same window
   (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file))
+;; Set default fonts
+(cond
+ ((member "Iosevka Fixed" (font-family-list))
+  (set-face-attribute 'default nil :font "Iosevka Fixed")))
 ;; Initialize package management system and add MELPA repository
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
