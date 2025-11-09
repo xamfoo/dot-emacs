@@ -55,6 +55,8 @@
   (package-install 'magit))
 (unless (package-installed-p 'org-superstar)
   (package-install 'org-superstar))
+(unless (package-installed-p 'org-super-agenda)
+  (package-install 'org-super-agenda))
 (unless (package-installed-p 'vterm)
   (package-install 'vterm))
 (if (stringp termux-emacs-vterm-dir)
@@ -65,7 +67,19 @@
   (variable-pitch-mode 1)
   (auto-fill-mode 0)
   (visual-line-mode 1)
-  (org-superstar-mode 1))
+  (org-superstar-mode 1)
+  (org-super-agenda-mode 1)
+  (setq org-habit-graph-column 50
+	org-habit-show-all-today t))
+(defun dw/org-after-local-vars ()
+  "Set project agenda files after local variables are applied."
+  (when (and (eq major-mode 'org-mode)
+             (boundp 'project-org-agenda-files))
+    (setq org-agenda-files project-org-agenda-files))
+  (when (and (eq major-mode 'org-mode)
+             (boundp 'project-org-agenda-custom-commands))
+    (setq org-agenda-custom-commands project-org-agenda-custom-commands)))
+(add-hook 'hack-local-variables-hook #'dw/org-after-local-vars)
 (use-package org
   :ensure t
   :hook (org-mode . dw/org-mode-setup)
@@ -81,3 +95,4 @@
   (org-indent ((nil (:inherit (org-hide fixed-pitch)))))
   (org-special-keyword ((nil (:inherit (font-lock-comment-face fixed-pitch)))))
   (org-list-dt ((nil (:inherit fixed-pitch)))))
+(keymap-global-set "C-c a" 'org-agenda)
