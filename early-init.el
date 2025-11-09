@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (when (string-equal system-type "android")
   (let* ((termux-prefix "/data/data/com.termux")
          (termux-path (concat termux-prefix "/files/usr/bin"))

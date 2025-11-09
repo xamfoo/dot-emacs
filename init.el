@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 ;; Don't show the splash screen
 (setq inhibit-startup-message t)
 ;; Turn off some unneeded UI elements
@@ -40,8 +41,8 @@
 ;; 🥰💀✌️🌴🐢🐐🍄⚽🍻👑📸😬👀🚨🏡🕊️🏆😻🌟🧿🍀🎨🍜
 (set-fontset-font t 'emoji (font-spec :family "Noto Color Emoji") nil 'append)
 (set-fontset-font t 'emoji (font-spec :family "Noto Emoji") nil 'append)
-(set-face-attribute 'line-number nil :inherit 'fixed-pitch)
-(set-face-attribute 'line-number-current-line nil :inherit 'fixed-pitch)
+(set-face-attribute 'line-number nil :inherit 'fixed-pitch :height 100)
+(set-face-attribute 'line-number-current-line nil :inherit 'fixed-pitch :height 100)
 ;; Initialize package management system and add MELPA repository
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
