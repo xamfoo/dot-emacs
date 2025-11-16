@@ -23,3 +23,17 @@
     (setenv "HOME" termux-home)
     (setq termux-emacs-vterm-dir
 	  (concat termux-home "/.local/opt/emacs-libvterm"))))
+(let* ((prev-paths (split-string (getenv "PATH") ":"))
+       (home (getenv "HOME"))
+       (add-paths (list
+		   (concat home "/.nix-profile/bin")))
+       (next-paths (append
+		    (seq-difference add-paths prev-paths)
+		    prev-paths))
+       (next-exec-path (append
+			(seq-difference add-paths exec-path)
+			exec-path)))
+  (setenv
+   "PATH"
+   (mapconcat 'identity next-paths ":"))
+  (setq exec-path next-exec-path))
