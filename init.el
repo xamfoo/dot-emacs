@@ -60,7 +60,7 @@
   (package-install 'org-super-agenda))
 (unless (package-installed-p 'vterm)
   (package-install 'vterm))
-(if (stringp termux-emacs-vterm-dir)
+(when (stringp termux-emacs-vterm-dir)
     (use-package vterm :load-path termux-emacs-vterm-dir))
 ;; Customize org-mode
 (defun dw/org-mode-setup ()
