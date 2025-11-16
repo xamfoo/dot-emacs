@@ -62,6 +62,9 @@
   (package-install 'vterm))
 (when (stringp termux-emacs-vterm-dir)
     (use-package vterm :load-path termux-emacs-vterm-dir))
+(use-package markdown-mode
+  :ensure t
+  :init (setq markdown-command "pandoc"))
 ;; Customize org-mode
 (defun dw/org-mode-setup ()
   (org-indent-mode 1)
