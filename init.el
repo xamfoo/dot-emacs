@@ -74,7 +74,10 @@
   (org-superstar-mode 1)
   (org-super-agenda-mode 1)
   (setq org-habit-graph-column 50
-	org-habit-show-all-today t))
+	org-habit-show-all-today t)
+  (keymap-global-set "C-c a" 'org-agenda)
+  (keymap-global-set "C-c c" 'org-capture)
+  (keymap-global-set "C-c l" 'org-store-link))
 ;; Disable block until we check if .dir-locals.el can be converted to non-eval
 ;; (defun dw/org-after-local-vars ()
 ;;   "Set project agenda files after local variables are applied."
@@ -100,4 +103,4 @@
   (org-indent ((nil (:inherit (org-hide fixed-pitch)))))
   (org-special-keyword ((nil (:inherit (font-lock-comment-face fixed-pitch)))))
   (org-list-dt ((nil (:inherit fixed-pitch)))))
-(keymap-global-set "C-c a" 'org-agenda)
+
