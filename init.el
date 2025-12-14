@@ -21,8 +21,6 @@
 (setq use-dialog-box nil)
 ;; Disable audible bell and enable visible bell
 (setq visible-bell t)
-;; Set default theme
-(load-theme 'modus-operandi t)
 ;; Use fontset for emoji
 (setq use-default-font-for-symbols nil)
 ;; Touchscreen keyboard always on
@@ -33,25 +31,32 @@
 (setq global-auto-revert-non-file-buffers t)
 ;; Disable text-conversion by default
 (setq overriding-text-conversion-style nil)
-;; Set default fonts
-(cond
- ((member "Iosevka Fixed" (font-family-list))
-  (set-face-attribute 'default nil :family "Iosevka Fixed" :height 140 :weight 'medium)))
-(cond
- ((member "Iosevka Aile" (font-family-list))
-  (set-face-attribute 'variable-pitch nil :family "Iosevka Aile" :height 140)))
-;; 🥰💀✌️🌴🐢🐐🍄⚽🍻👑📸😬👀🚨🏡🕊️🏆😻🌟🧿🍀🎨🍜
-(set-fontset-font t 'emoji (font-spec :family "Noto Color Emoji") nil 'append)
-(set-fontset-font t 'emoji (font-spec :family "Apple Color Emoji") nil 'append)
-(set-fontset-font t 'emoji (font-spec :family "Noto Emoji") nil 'append)
-(set-face-attribute 'line-number nil :inherit 'fixed-pitch :height 100)
-(set-face-attribute 'line-number-current-line nil :inherit 'fixed-pitch :height 100)
 ;; Initialize package management system and add MELPA repository
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 (unless package-archive-contents
   (package-refresh-contents))
+(use-package ef-themes
+  :ensure t
+  :init
+  (ef-themes-take-over-modus-themes-mode 1)
+  :config
+  (setq modus-themes-mixed-fonts t)
+  (setq modus-themes-italic-constructs t)
+  (modus-themes-load-theme 'ef-elea-dark)
+  (cond
+   ((member "Iosevka Fixed" (font-family-list))
+    (set-face-attribute 'default nil :family "Iosevka Fixed" :height 140 :weight 'medium)))
+  (cond
+   ((member "Iosevka Aile" (font-family-list))
+    (set-face-attribute 'variable-pitch nil :family "Iosevka Aile" :height 140)))
+  ;; 🥰💀✌️🌴🐢🐐🍄⚽🍻👑📸😬👀🚨🏡🕊️🏆😻🌟🧿🍀🎨🍜
+  (set-fontset-font t 'emoji (font-spec :family "Noto Color Emoji") nil 'append)
+  (set-fontset-font t 'emoji (font-spec :family "Apple Color Emoji") nil 'append)
+  (set-fontset-font t 'emoji (font-spec :family "Noto Emoji") nil 'append)
+  (set-face-attribute 'line-number nil :inherit 'fixed-pitch :height 100)
+  (set-face-attribute 'line-number-current-line nil :inherit 'fixed-pitch :height 100))
 (use-package magit
   :defer t
   :ensure t)
