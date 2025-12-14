@@ -60,10 +60,6 @@
 (use-package magit
   :defer t
   :ensure t)
-(use-package org-superstar
-  :ensure t)
-(use-package org-super-agenda
-  :ensure t)
 (when (stringp termux-emacs-vterm-dir)
   (use-package vterm
     :ensure t
@@ -78,18 +74,67 @@
   (auto-fill-mode 0)
   (visual-line-mode 1)
   (org-superstar-mode 1)
-  (org-super-agenda-mode 1)
-  (setq org-habit-graph-column 50
-	org-habit-show-all-today t))
-(keymap-global-set "C-c a" 'org-agenda)
-(keymap-global-set "C-c c" 'org-capture)
-(keymap-global-set "C-c l" 'org-store-link)
+  (org-super-agenda-mode 1))
+(defvar my/org-agenda-git-ls-files
+  '("git" "ls-files" "--cached" "--modified" "--others" "--exclude-standard" "--full-name")
+  "Return the git command to list files.")
+(defun my/org-agenda-git-ls-files-async (callback &optional git-dir git-pattern)
+  "Asynchronously run `git ls-files` and call CALLBACK with the result.
+
+CALLBACK is called with a list of absolute file names.
+GIT-DIR, if non-nil, is used as `default-directory`.
+GIT-PATTERN, if non-nil, is passed after `--` to git."
+  (let* ((default-directory (or git-dir default-directory))
+         (buffer (generate-new-buffer "*git ls-files*"))
+         (args (append my/org-agenda-git-ls-files
+                       (when git-pattern (list "--" git-pattern))))
+         (process (apply #'start-process
+                         "org-agenda-git-files"
+                         buffer
+                         args)))
+    (set-process-sentinel
+     process
+     (lambda (proc event)
+       (when (eq (process-status proc) 'exit)
+         (unwind-protect
+             (with-current-buffer (process-buffer proc)
+               (if (= (process-exit-status proc) 0)
+                   ;; Success: call callback with files
+                   (let ((files
+                          (mapcar #'expand-file-name
+                                  (split-string (buffer-string) "\n" t))))
+                     (funcall callback files))
+                 ;; Failure: print error message
+                 (message "Error running git ls-files: %s"
+                          (string-trim (buffer-string))))))
+         (kill-buffer (process-buffer proc)))))))
+(defun my/directories-of-files (files)
+  "List of unique directories where files exist"
+  (delete-dups (mapcar #'file-name-directory files)))
 (use-package org
+  :bind (("C-c a" . org-agenda)
+         ("C-c c" . org-capture)
+         ("C-c l" . org-store-link))
   :ensure t
-  :hook (org-mode . dw/org-mode-setup)
   :config
-  ;; Open file in same window
-  (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file))
+  (let* ((note-dir "~/code/note")
+	 (note-git-files-pattern "*.org")
+	 (note-inbox-file (concat note-dir "/gtd/10_inbox/inbox.org")))
+    (my/org-agenda-git-ls-files-async
+     (lambda (files)
+       (setq org-agenda-files (my/directories-of-files files))
+       (setq org-refile-targets
+	     '((nil :maxlevel . 9)
+	       (org-agenda-files :maxlevel . 9))))
+     note-dir note-git-files-pattern)
+    (setq org-default-notes-file note-inbox-file)
+    ;; Open file in same window
+    (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file))
+  :custom
+  (org-habit-graph-column 50)
+  (org-habit-show-all-today t)
+  (org-use-property-inheritance '("Context"))
+  :hook (org-mode . dw/org-mode-setup))
 (use-package org-faces
   :ensure nil
   :custom-face
@@ -99,4 +144,42 @@
   (org-indent ((nil (:inherit (org-hide fixed-pitch)))))
   (org-special-keyword ((nil (:inherit (font-lock-comment-face fixed-pitch)))))
   (org-list-dt ((nil (:inherit fixed-pitch)))))
+(use-package org-super-agenda
+  :ensure t
+  :config
+  (setq
+   org-agenda-custom-commands
+   '(("A" "Agenda Overview"
+      ((agenda
+        ""
+        ((org-agenda-span 'day)
+         (org-super-agenda-groups
+          '((:log t)  ; Automatically named "Log"
+            (:name "Schedule"
+                   :time-grid t)
+            (:name "Today"
+                   :scheduled today)
+            (:habit t)
+            (:name "Due today"
+                   :deadline today)
+            (:name "Overdue"
+                   :deadline past)
+            (:name "Due soon"
+                   :deadline future)
+            (:name "Scheduled earlier"
+                   :scheduled past)))))))
+     ("c" "Contexts Overview"
+      ((todo
+        ""
+        ((org-super-agenda-groups
+          '((:name "computer" :take (3 (:and (:property ("Context" "computer") :children nil :scheduled nil))))
+	    (:name "errand" :take (3 (:and (:property ("Context" "errand") :children nil :scheduled nil))))
+	    (:name "home" :take (3 (:and (:property ("Context" "home") :children nil :scheduled nil))))
+	    (:name "phone" :take (3 (:and (:property ("Context" "phone") :children nil :scheduled nil))))
+	    (:name "shopping" :take (3 (:and (:property ("Context" "shopping") :children nil :scheduled nil))))
+	    (:name "think" :take (3 (:and (:property ("Context" "think") :children nil :scheduled nil))))
+	    (:name "wait" :take (3 (:and (:property ("Context" "wait") :children nil :scheduled nil))))
+	    (:discard (:anything t)))))))))))
+(use-package org-superstar
+  :ensure t)
 
