@@ -52,16 +52,17 @@
 (package-initialize)
 (unless package-archive-contents
   (package-refresh-contents))
-(unless (package-installed-p 'magit)
-  (package-install 'magit))
-(unless (package-installed-p 'org-superstar)
-  (package-install 'org-superstar))
-(unless (package-installed-p 'org-super-agenda)
-  (package-install 'org-super-agenda))
-(unless (package-installed-p 'vterm)
-  (package-install 'vterm))
+(use-package magit
+  :defer t
+  :ensure t)
+(use-package org-superstar
+  :ensure t)
+(use-package org-super-agenda
+  :ensure t)
 (when (stringp termux-emacs-vterm-dir)
-  (use-package vterm :load-path termux-emacs-vterm-dir))
+  (use-package vterm
+    :ensure t
+    :load-path termux-emacs-vterm-dir))
 (use-package markdown-mode
   :ensure t
   :init (setq markdown-command "pandoc"))
@@ -78,16 +79,6 @@
 (keymap-global-set "C-c a" 'org-agenda)
 (keymap-global-set "C-c c" 'org-capture)
 (keymap-global-set "C-c l" 'org-store-link)
-;; Disable block until we check if .dir-locals.el can be converted to non-eval
-;; (defun dw/org-after-local-vars ()
-;;   "Set project agenda files after local variables are applied."
-;;   (when (and (eq major-mode 'org-mode)
-;;              (boundp 'project-org-agenda-files))
-;;     (setq org-agenda-files project-org-agenda-files))
-;;   (when (and (eq major-mode 'org-mode)
-;;              (boundp 'project-org-agenda-custom-commands))
-;;     (setq org-agenda-custom-commands project-org-agenda-custom-commands)))
-;; (add-hook 'hack-local-variables-hook #'dw/org-after-local-vars)
 (use-package org
   :ensure t
   :hook (org-mode . dw/org-mode-setup)
