@@ -47,7 +47,8 @@
   (modus-themes-load-theme 'ef-elea-dark)
   (cond
    ((member "Iosevka Fixed" (font-family-list))
-    (set-face-attribute 'default nil :family "Iosevka Fixed" :height 140 :weight 'medium)))
+    (set-face-attribute 'default nil :family "Iosevka Fixed" :height 140 :weight 'medium)
+    (set-face-attribute 'fixed-pitch nil :family "Iosevka Fixed" :height 140 :weight 'medium)))
   (cond
    ((member "Iosevka Aile" (font-family-list))
     (set-face-attribute 'variable-pitch nil :family "Iosevka Aile" :height 140)))
