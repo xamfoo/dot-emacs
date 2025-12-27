@@ -134,7 +134,7 @@ GIT-PATTERN, if non-nil, is passed after `--` to git."
   :custom
   (org-habit-graph-column 50)
   (org-habit-show-all-today t)
-  (org-use-property-inheritance '("Context"))
+  (org-use-property-inheritance '("Context" "Section"))
   :hook (org-mode . dw/org-mode-setup))
 (use-package org-faces
   :ensure nil
