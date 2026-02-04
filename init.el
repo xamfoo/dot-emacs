@@ -112,10 +112,28 @@ GIT-PATTERN, if non-nil, is passed after `--` to git."
 (defun my/directories-of-files (files)
   "List of unique directories where files exist"
   (delete-dups (mapcar #'file-name-directory files)))
+(defun my/org-copy-link-url ()
+  "Copy the URL of the org link at point, or a plain URL."
+  (interactive)
+  (let* ((context (org-element-context))
+         (url
+          (cond
+           ;; Org link (most correct)
+           ((eq (org-element-type context) 'link)
+            (org-element-property :raw-link context))
+           ;; Plain URL fallback
+           ((thing-at-point-url-at-point)))))
+    (if url
+        (progn
+          (kill-new url)
+          (message "Copied URL: %s"
+                   (truncate-string-to-width url 60 nil nil "...")))
+      (user-error "No link or URL at point"))))
 (use-package org
   :bind (("C-c a" . org-agenda)
          ("C-c c" . org-capture)
-         ("C-c l" . org-store-link))
+         ("C-c l" . org-store-link)
+	 ("C-c C-x y" . my/org-copy-link-url))
   :ensure t
   :config
   (let* ((note-dir "~/code/note")
